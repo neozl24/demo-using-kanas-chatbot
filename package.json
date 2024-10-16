@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "kanas-chatbot": "0.0.4",
+    "kanas-chatbot": "0.0.7",
     "next": "14.2.15",
     "react": "^18",
     "react-dom": "^18"
