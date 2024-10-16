@@ -1,103 +1,141 @@
-import Image from "next/image";
+"use client"
 import { ChatWindow } from 'kanas-chatbot'
+import Image from "next/image"
+import { useState } from 'react'
+import customerServiceIcon from '../public/customer-service.svg'
+import leafIcon from '../public/leaf.svg'
+
+import 'kanas-chatbot/dist/style.css'
+
+// This url is based on your server implementation
+const chatUrl = 'http://127.0.0.1:8080/chat'
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-          <ChatWindow />
-        </ol>
+  const [showSmallWindow, setShowSmallWindow] = useState(false)
+  const [showLargeWindow, setShowLargeWindow] = useState(false)
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+  return (
+    <div className="w-full h-full min-h-screen flex items-center justify-center bg-black">
+      <Button
+        className='absolute left-40 top-40'
+        onClick={() => { setShowSmallWindow(true) }}
+      >
+        Show Small Size Chat Window
+      </Button>
+      <Button
+        className='absolute left-40 top-80'
+        onClick={() => { setShowLargeWindow(true) }}
+      >
+        Show Large Size Chat Window
+      </Button>
+      {
+        showSmallWindow ? (
+          <SmallChatWindow onClose={() => { setShowSmallWindow(false) }} />
+        ) : null
+      }
+      {
+        showLargeWindow ? (
+          <LargeChatWindow onClose={() => { setShowLargeWindow(false) }} />
+        ) : null
+      }
     </div>
   );
+}
+
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  className?: string
+  children: React.ReactNode
+}
+
+const Button = ({
+  className = '',
+  children,
+  ...props
+}: ButtonProps) =>{
+  return (
+    <button
+      className={`p-5 border border-white rounded-full text-white hover:bg-stone-800 active:bg-stone-900 ${className}`}
+      {...props}
+    >
+      {children}
+    </button>
+  )
+}
+
+interface WindowProps {
+  onClose: () => void
+}
+
+const SmallChatWindow = ({
+  onClose,
+}: WindowProps) => {
+  const nextLogo = (
+    <Image
+      src="https://nextjs.org/icons/next.svg"
+      alt="Next.js logo"
+      width={80}
+      height={15}
+    />
+  )
+
+  return (
+    <div className="w-[350px] h-[700px] z-10 text-black">
+      <ChatWindow
+        url={chatUrl}
+        title="Small Size Screen"
+        onClose={onClose}
+        style={{
+          borderRadius: 5,
+          boxShadow: 'rgba(0, 0, 0, 0.1) 0 4px 16px',
+        }}
+        topChildren={nextLogo}
+      />
+    </div>
+  )
+}
+
+const LargeChatWindow = ({
+  onClose,
+}: WindowProps) => {
+  const topLine = (
+    <div className='flex items-center'>
+      <Image
+        src={leafIcon}
+        alt="leaf icon"
+        width={20}
+        height={20}
+      />
+      <span className='ml-2'>Have a good day!</span>
+    </div>
+  )
+
+  const bottomLine = (
+    <div className='flex items-center float-right'>
+      <Image
+        className='invert-[0.5]'
+        src={customerServiceIcon}
+        alt="customer service icon"
+        width={20}
+        height={20}
+      />
+      <span className='ml-3 text-stone-600'>666-6666</span>
+    </div>
+  )
+
+  return (
+    <div className="w-10/12 h-[1200px] max-h-screen z-10 text-black">
+      <ChatWindow
+        url={chatUrl}
+        title="How can I help you with your queries?"
+        onClose={onClose}
+        style={{
+          borderRadius: 20,
+          boxShadow: 'rgba(0, 0, 0, 0.1) 0 4px 16px',
+        }}
+        topChildren={topLine}
+        bottomChildren={bottomLine}
+        themeColor='#224375'
+      />
+    </div>
+  )
 }
